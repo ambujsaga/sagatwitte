@@ -13,4 +13,6 @@
     "type": "image/jpeg"
   }
 ]
+    "start_url": "/index.html",
+  "display": "standalone"
 }
