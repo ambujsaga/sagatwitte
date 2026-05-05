@@ -212,6 +212,37 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+    const SUPABASE_URL = "https://mssnobmmzcmehdzanoqp.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_-d9Ve_gqEJ7sukGxo6xM9w_XhT9vyza";
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // Initial Check
+    window.addEventListener('load', async () => {
+        const { data: { session } } = await _supabase.auth.getSession();
+        if (session) {
+            setupApp(session.user);
+        } else {
+            document.getElementById('loader-screen').style.display = 'none';
+            document.getElementById('auth-section').style.display = 'block';
+        }
+    });
+
+    async function setupApp(user) {
+        // Profile check aur login logic yahan aayega
+        document.getElementById('loader-screen').style.display = 'none';
+        document.getElementById('main-app').style.display = 'block';
+        // loadFeed logic...
+    }
+
+    // Google Login Trigger
+    document.getElementById('googleLogin').onclick = () => {
+        _supabase.auth.signInWithOAuth({ provider: 'google' });
+    };
+</script>
+
 
     <script>
         const SUPABASE_URL = "https://mssnobmmzcmehdzanoqp.supabase.co";
