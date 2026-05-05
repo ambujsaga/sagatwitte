@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Saga Twitte</title>
 
     <link rel="apple-touch-icon" href="logo.jpg">
@@ -21,32 +21,19 @@
             --neon-shadow: 0 0 15px rgba(0, 229, 255, 0.6);
         }
 
-        /* Desktop Mode Block Logic */
-        html {
-            background-color: #000; /* Sides ka color desktop par black dikhega */
-            display: flex;
-            justify-content: center;
-        }
-
         body { 
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; 
             background: var(--bg); 
             color: var(--text-main); 
             margin: 0; 
             padding-bottom: 100px; 
-            overflow-x: hidden;
-            /* MOBILE LOCK CODE */
-            width: 100%;
-            max-width: 450px; /* Desktop site on karne par bhi itna hi bada dikhega */
-            min-height: 100vh;
-            box-shadow: 0 0 50px rgba(0,0,0,0.8);
-            position: relative;
+            overflow-x: hidden; 
         }
 
+        /* --- 3 SECONDS LOADER --- */
         #loader-screen {
             position: fixed; inset: 0; background: var(--bg);
             display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999;
-            max-width: 450px; margin: 0 auto;
         }
         .spinner {
             width: 50px; height: 50px; border: 5px solid rgba(0, 229, 255, 0.1);
@@ -67,11 +54,10 @@
             position: sticky; 
             top: 0; 
             z-index: 1000; 
-            max-width: 450px;
         }
 
         .logo { font-size: 24px; font-weight: 800; color: var(--primary); cursor: pointer; text-shadow: var(--neon-shadow); }
-        .container { width: 95%; margin: 15px auto; }
+        .container { width: 95%; max-width: 500px; margin: 15px auto; }
         
         .card { 
             background: var(--card-bg); 
@@ -79,6 +65,8 @@
             border-radius: 20px; 
             border: 1px solid rgba(0, 229, 255, 0.1); 
             margin-bottom: 20px; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
         }
 
         input, textarea { 
@@ -96,8 +84,7 @@
         .btn-primary { background: var(--primary); color: #000; width: 100%; box-shadow: var(--neon-shadow); }
 
         .fab { 
-            position: fixed; bottom: 35px; 
-            left: 50%; transform: translateX(140px); /* Positioned relative to the 450px frame */
+            position: fixed; bottom: 35px; right: 25px; 
             width: 60px; height: 60px; 
             background: var(--primary); 
             border-radius: 50%; 
@@ -105,11 +92,6 @@
             color: #000; 
             box-shadow: var(--neon-shadow); 
             z-index: 2000; cursor: pointer; 
-        }
-
-        /* Adjustment for smaller screens */
-        @media screen and (max-width: 450px) {
-            .fab { left: auto; right: 25px; transform: none; }
         }
 
         .p-pic { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; }
@@ -120,13 +102,27 @@
         .action-btn { background: transparent; color: var(--text-muted); font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 6px; }
         
         svg { width: 20px; height: 20px; fill: currentColor; }
-        .del-icon { width: 18px; height: 18px; fill: var(--red); }
+        .del-icon { width: 18px; height: 18px; fill: var(--red); opacity: 0.7; transition: 0.3s; }
+        .del-icon:hover { opacity: 1; }
 
         .comment-drawer { display: none; margin-top: 15px; background: rgba(0,0,0,0.3); border-radius: 15px; padding: 15px; }
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 25px 0; }
         .stat-card { background: rgba(0, 229, 255, 0.05); padding: 15px; border-radius: 18px; border: 1px solid var(--primary); text-align: center; }
         .stat-val { display: block; font-size: 28px; font-weight: 800; color: var(--primary); }
-        #search-row { display: none; padding: 15px; background: var(--card-bg); border-bottom: 1px solid var(--primary); max-width: 450px; }
+        #search-row { display: none; padding: 15px; background: var(--card-bg); border-bottom: 1px solid var(--primary); }
+
+        /* --- DESKTOP & PROFESSIONAL IMPROVEMENTS --- */
+        @media (min-width: 768px) {
+            .container { max-width: 600px; margin-top: 30px; }
+            header { padding: 15px 10%; }
+            .card { transition: transform 0.2s ease; }
+            .card:hover { transform: translateY(-3px); border-color: var(--primary); }
+            .fab { bottom: 50px; right: 50px; width: 70px; height: 70px; transition: 0.3s; }
+            .fab:hover { transform: scale(1.1) rotate(90deg); }
+            ::-webkit-scrollbar { width: 8px; }
+            ::-webkit-scrollbar-track { background: var(--bg); }
+            ::-webkit-scrollbar-thumb { background: var(--card-bg); border-radius: 10px; border: 1px solid var(--primary); }
+        }
     </style>
 </head>
 <body>
@@ -140,6 +136,9 @@
         <h1 class="logo" style="font-size:45px;">Saga Twitte</h1>
         <button id="googleLogin" class="btn-primary" style="background:#fff; color:#000; width:auto; padding:15px 40px; margin-top:30px;">Login with Google</button>
         <p id="guest-trigger" style="color:var(--primary); margin-top:20px; cursor:pointer; text-decoration:underline;">Continue as Guest</p>
+        <div style="position: absolute; bottom: 40px; left: 0; right: 0; display: flex; flex-direction: column; align-items: center; opacity: 0.8;">
+            <img src="https://i.ibb.co/Kxdbgc6D/Dofoto-20260430-133314752.png" alt="ree" style="width: 80px; filter: brightness(2);">
+        </div>
     </div>
 
     <div id="main-app" style="display:none;">
@@ -155,7 +154,7 @@
 
         <div id="search-row">
             <div style="display:flex; gap:10px;">
-                <input type="text" id="sq" placeholder="Search username...">
+                <input type="text" id="sq" placeholder="Search @username...">
                 <button onclick="findUser()" class="btn-primary" style="width: auto;">Go</button>
             </div>
         </div>
@@ -177,6 +176,7 @@
                     </div>
                     <div id="my-controls" style="display:none;">
                         <button onclick="checkEditUsername()" style="background:rgba(255,255,255,0.1); color:white; width:100%; margin-bottom:10px;">Edit Username</button>
+                        <p id="lock-timer" style="font-size:11px; color:var(--red);"></p>
                         <button onclick="logout()" style="background:var(--red); color:white; width:100%;">Logout</button>
                     </div>
                 </div>
@@ -190,11 +190,11 @@
     </div>
 
     <div id="post-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:3000; align-items:center; justify-content:center;">
-        <div class="container" style="max-width: 400px;"><div class="card">
+        <div class="container"><div class="card">
             <h3 style="margin:0 0 20px 0;">New Post</h3>
-            <textarea id="postInput" rows="5" placeholder="Write something..."></textarea>
+            <textarea id="postInput" rows="5" placeholder="What's happening?"></textarea>
             <div style="display:flex; gap:10px; margin-top:20px;">
-                <button class="btn-primary" onclick="doPost()">Post</button>
+                <button class="btn-primary" onclick="doPost()">Post Now</button>
                 <button onclick="setPostModal(false)" style="background:rgba(255,255,255,0.1); color:white;">Cancel</button>
             </div>
         </div></div>
@@ -212,7 +212,12 @@
         const gProv = new GoogleAuthProvider();
         let me = null;
 
-        window.addEventListener('load', () => { setTimeout(() => { document.getElementById('loader-screen').style.display = 'none'; }, 3000); });
+        // 3 SECONDS TIMER
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loader-screen').style.display = 'none';
+            }, 3000);
+        });
 
         const timeAgo = (t) => {
             const d = Date.now() - t, m = Math.floor(d/60000), h = Math.floor(m/60), day = Math.floor(h/24);
@@ -243,6 +248,7 @@
             }
         });
 
+        // GUEST MODE LOGIC
         window.showGuestFeed = () => {
             document.getElementById('auth-section').style.display = 'none';
             document.getElementById('main-app').style.display = 'block';
@@ -252,7 +258,7 @@
 
         window.requireLogin = (cb) => {
             if(!auth.currentUser) {
-                alert("Please login first!");
+                alert("Login karo pahle!");
                 document.getElementById('main-app').style.display = 'none';
                 document.getElementById('auth-section').style.display = 'block';
             } else cb();
@@ -313,8 +319,8 @@
                                     ${(auth.currentUser && (auth.currentUser.uid === c.uid || auth.currentUser.uid === p.uid)) ? `<div onclick="delCom('${d.id}', ${i})" style="cursor:pointer;">${iconDelete}</div>` : ''}
                                 </div>`).join('')}</div>
                             <div style="display:flex; gap:8px; margin-top:15px;">
-                                <input id="in-${d.id}" placeholder="Type a reply...">
-                                <button onclick="requireLogin(() => addCom('${d.id}'))" class="btn-primary" style="width:auto;">Send</button>
+                                <input id="in-${d.id}" placeholder="Reply...">
+                                <button onclick="addCom('${d.id}')" class="btn-primary" style="width:auto;">Send</button>
                             </div>
                         </div>
                     `;
@@ -325,13 +331,19 @@
         }
 
         window.starIt = async (id, has) => { 
-            const voter = auth.currentUser ? auth.currentUser.uid : "guest-voter";
-            await updateDoc(doc(db, "posts", id), { stars: has ? arrayRemove(voter) : arrayUnion(voter) }); 
+            if(!auth.currentUser) {
+                alert("Login karo pahle!");
+                document.getElementById('main-app').style.display = 'none';
+                document.getElementById('auth-section').style.display = 'block';
+                return;
+            }
+            await updateDoc(doc(db, "posts", id), { stars: has ? arrayRemove(auth.currentUser.uid) : arrayUnion(auth.currentUser.uid) }); 
         };
 
         window.checkEditUsername = async () => {
             const now = Date.now();
-            if(now - me.lastChange < 7*24*60*60*1000) { alert("Wait 7 days!"); return; }
+            const diff = now - me.lastChange;
+            if(diff < 7*24*60*60*1000) { alert("7 din ruko!"); return; }
             const newU = prompt("New username:").toLowerCase().replace(/\s+/g,'');
             if(newU) { await updateDoc(doc(db, "users", auth.currentUser.uid), { username: newU, lastChange: now }); location.reload(); }
         };
@@ -350,10 +362,16 @@
             i.value = "";
         };
 
+        window.delCom = async (pid, idx) => {
+            const r = doc(db, "posts", pid); const s = await getDoc(r);
+            let c = s.data().comments; c.splice(idx, 1);
+            await updateDoc(r, { comments: c });
+        };
+
         window.findUser = async () => {
             const qStr = document.getElementById('sq').value.toLowerCase().trim();
             const s = await getDocs(query(collection(db, "users"), where("username", "==", qStr)));
-            if(s.empty) alert("User not found!"); else navTo('profile', false, s.docs[0].data());
+            if(s.empty) alert("No user!"); else navTo('profile', false, s.docs[0].data());
         };
 
         window.findUserByUname = async (un) => {
@@ -361,7 +379,7 @@
             if(!s.empty) navTo('profile', false, s.docs[0].data());
         };
 
-        window.delPost = async (id) => { if(confirm("Delete post?")) await deleteDoc(doc(db, "posts", id)); };
+        window.delPost = async (id) => { if(confirm("Delete?")) await deleteDoc(doc(db, "posts", id)); };
         window.toggleSearch = () => { const r = document.getElementById('search-row'); r.style.display = r.style.display === 'block'?'none':'block'; };
         window.toggleComs = (id) => { const d = document.getElementById('drawer-'+id); d.style.display = d.style.display === 'block'?'none':'block'; };
         window.setPostModal = (s) => document.getElementById('post-modal').style.display = s?'flex':'none';
