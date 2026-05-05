@@ -223,16 +223,15 @@
     </div>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, doc, updateDoc, arrayUnion, deleteDoc, getDoc, setDoc, where, getDocs, arrayRemove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+  // 1. Supabase Library Import (Firebase imports ki jagah)
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
-        const conf = { apiKey: "AIzaSyC2DSzlGsl5y3NwgOpgIOC-1OUYyKEaZ5k", authDomain: "saga-social-a13a4.firebaseapp.com", projectId: "saga-social-a13a4", storageBucket: "saga-social-a13a4.appspot.com" };
-        const app = initializeApp(conf);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const gProv = new GoogleAuthProvider();
-        let me = null;
+  // 2. Supabase Configuration (Firebase conf ki jagah)
+  const supabaseUrl = 'https://mssnobemzcmchdzanoqp.supabase.co';
+  const supabaseKey = 'sb_publishable_-d9Ve_gqEJ7sukGxo6xM9w_XhT9vyza';
+  const supabase = createClient(supabaseUrl, supabaseKey);
+
+  let me = null;
 
         // 3 SECONDS TIMER
         window.addEventListener('load', () => {
