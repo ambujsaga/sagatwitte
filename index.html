@@ -30,9 +30,10 @@
             overflow-x: hidden; 
         }
 
+        /* --- 3 SECONDS LOADER --- */
         #loader-screen {
             position: fixed; inset: 0; background: var(--bg);
-            display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 5000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999;
         }
         .spinner {
             width: 50px; height: 50px; border: 5px solid rgba(0, 229, 255, 0.1);
@@ -120,7 +121,7 @@
     <div id="auth-section" style="display:none; text-align:center; padding-top:100px;">
         <h1 class="logo" style="font-size:45px;">Saga Twitte</h1>
         <button id="googleLogin" class="btn-primary" style="background:#fff; color:#000; width:auto; padding:15px 40px; margin-top:30px;">Login with Google</button>
-        <p id="guest-btn" style="color:var(--primary); margin-top:20px; cursor:pointer; text-decoration:underline;">Continue as Guest</p>
+        <p id="guest-trigger" style="color:var(--primary); margin-top:20px; cursor:pointer; text-decoration:underline;">Continue as Guest</p>
         <div style="position: absolute; bottom: 40px; left: 0; right: 0; display: flex; flex-direction: column; align-items: center; opacity: 0.8;">
             <img src="https://i.ibb.co/Kxdbgc6D/Dofoto-20260430-133314752.png" alt="ree" style="width: 80px; filter: brightness(2);">
         </div>
@@ -197,7 +198,12 @@
         const gProv = new GoogleAuthProvider();
         let me = null;
 
-        setTimeout(() => { document.getElementById('loader-screen').style.display = 'none'; }, 6000);
+        // 3 SECONDS TIMER
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loader-screen').style.display = 'none';
+            }, 3000);
+        });
 
         const timeAgo = (t) => {
             const d = Date.now() - t, m = Math.floor(d/60000), h = Math.floor(m/60), day = Math.floor(h/24);
@@ -223,25 +229,25 @@
                     navTo('home');
                 }
             } else {
-                // If not logged in, keep auth section visible
                 document.getElementById('auth-section').style.display = 'block';
                 document.getElementById('main-app').style.display = 'none';
             }
         });
 
+        // GUEST MODE LOGIC
         window.showGuestFeed = () => {
             document.getElementById('auth-section').style.display = 'none';
             document.getElementById('main-app').style.display = 'block';
             loadFeed("feed", null);
         };
-        document.getElementById('guest-btn').onclick = showGuestFeed;
+        document.getElementById('guest-trigger').onclick = showGuestFeed;
 
-        window.requireLogin = (callback) => {
+        window.requireLogin = (cb) => {
             if(!auth.currentUser) {
-                alert("Please login to use this feature!");
+                alert("Login karo pahle!");
                 document.getElementById('main-app').style.display = 'none';
                 document.getElementById('auth-section').style.display = 'block';
-            } else { callback(); }
+            } else cb();
         };
 
         window.navTo = (v, isMe = true, other = null) => {
@@ -259,20 +265,11 @@
         };
 
         function loadFeed(divId, uid) {
-            // Index Issue Fix: Try to load without orderBy first if it fails, or ensure you created the index
-            let q;
-            try {
-                q = uid ? query(collection(db, "posts"), where("uid", "==", uid), orderBy("time", "desc")) 
+            let q = uid ? query(collection(db, "posts"), where("uid", "==", uid), orderBy("time", "desc")) 
                         : query(collection(db, "posts"), orderBy("time", "desc"));
-            } catch(e) {
-                q = uid ? query(collection(db, "posts"), where("uid", "==", uid)) 
-                        : query(collection(db, "posts"));
-            }
 
             onSnapshot(q, (s) => {
-                const div = document.getElementById(divId); 
-                if(!div) return;
-                div.innerHTML = "";
+                const div = document.getElementById(divId); div.innerHTML = "";
                 let stars = 0, posts = 0;
                 s.forEach(d => {
                     const p = d.data();
@@ -315,19 +312,13 @@
                     `;
                     div.appendChild(el);
                 });
-                if(uid && document.getElementById('s-stars')) { 
-                    document.getElementById('s-stars').innerText = stars; 
-                    document.getElementById('s-posts').innerText = posts; 
-                }
-            }, (error) => {
-                console.log("Error fetching posts:", error);
-                // If index is missing, it shows a link in console to create it.
+                if(uid) { document.getElementById('s-stars').innerText = stars; document.getElementById('s-posts').innerText = posts; }
             });
         }
 
         window.starIt = async (id, has) => { 
             if(!auth.currentUser) {
-                alert("Login to star posts!");
+                alert("Login karo pahle!");
                 document.getElementById('main-app').style.display = 'none';
                 document.getElementById('auth-section').style.display = 'block';
                 return;
@@ -338,16 +329,9 @@
         window.checkEditUsername = async () => {
             const now = Date.now();
             const diff = now - me.lastChange;
-            const daysLeft = 7 - Math.floor(diff/(1000*60*60*24));
-            if(diff < 7*24*60*60*1000) {
-                document.getElementById('lock-timer').innerText = `Wait ${daysLeft} more days!`;
-                return;
-            }
+            if(diff < 7*24*60*60*1000) { alert("7 din ruko!"); return; }
             const newU = prompt("New username:").toLowerCase().replace(/\s+/g,'');
-            if(newU) {
-                await updateDoc(doc(db, "users", auth.currentUser.uid), { username: newU, lastChange: now });
-                location.reload();
-            }
+            if(newU) { await updateDoc(doc(db, "users", auth.currentUser.uid), { username: newU, lastChange: now }); location.reload(); }
         };
 
         window.doPost = async () => {
@@ -359,4 +343,21 @@
 
         window.addCom = async (id) => {
             const i = document.getElementById('in-'+id);
-            if(!i.value.trim()) ret
+            if(!i.value.trim()) return;
+            await updateDoc(doc(db, "posts", id), { comments: arrayUnion({ uid: auth.currentUser.uid, user: me.username, msg: i.value }) });
+            i.value = "";
+        };
+
+        window.delCom = async (pid, idx) => {
+            const r = doc(db, "posts", pid); const s = await getDoc(r);
+            let c = s.data().comments; c.splice(idx, 1);
+            await updateDoc(r, { comments: c });
+        };
+
+        window.findUser = async () => {
+            const qStr = document.getElementById('sq').value.toLowerCase().trim();
+            const s = await getDocs(query(collection(db, "users"), where("username", "==", qStr)));
+            if(s.empty) alert("No user!"); else navTo('profile', false, s.docs[0].data());
+        };
+
+        window.fi
