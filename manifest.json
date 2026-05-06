@@ -16,3 +16,14 @@
     "start_url": "/index.html",
   "display": "standalone"
 }
+
+
+
+{
+  "name": "The Jaya",
+  "short_name": "Jaya",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#030a1a",
+  "theme_color": "#00e5ff"
+}
