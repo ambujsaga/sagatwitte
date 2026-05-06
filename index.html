@@ -251,8 +251,11 @@
     <div id="post-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:3000; align-items:center; justify-content:center;">
         <div class="container" style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px;"><div class="card">
             <h3 style="margin:0 0 20px 0;">New Post</h3>
-            <textarea id="postInput" rows="5" placeholder="What's happening?"></textarea>
-            <div style="display:flex; gap:10px; margin-top:20px;">
+            <textarea id="postInput" rows="5" placeholder="What's happening?" oninput="limitWords(this)"></textarea>
+<div id="wordCount" style="font-size: 12px; color: var(--text-muted); text-align: right; margin-top: 5px;">
+    Words: 0 / 150
+</div>
+<div style="display:flex; gap:10px; margin-top:20px;">
                 <button class="btn-primary" onclick="doPost()">Post Now</button>
                 <button onclick="setPostModal(false)" style="background:rgba(255,255,255,0.1); color:var(--text-main);">Cancel</button>
                 <button onclick="pasteText()" style="background:var(--card-bg); color:var(--primary); border:1px solid var(--primary); width: auto;">Paste</button>
@@ -517,6 +520,28 @@
 
         window.logout = () => { signOut(auth); location.reload(); };
         document.getElementById('googleLogin').onclick = () => signInWithPopup(auth, gProv);
+        window.limitWords = (element) => {
+    const maxWords = 150;
+    let value = element.value;
+    
+    // Words ko split karke count karna (extra spaces ko hatakar)
+    let words = value.trim().split(/\s+/);
+    let wordCount = value.trim() === "" ? 0 : words.length;
+
+    if (wordCount > maxWords) {
+        // Agar 150 se zyada hain, toh pehle 150 words ko nikaal kar wapas set karna
+        const trimmedText = words.slice(0, maxWords).join(" ");
+        element.value = trimmedText;
+        wordCount = maxWords;
+    }
+
+    // Counter update karna
+    document.getElementById('wordCount').innerText = `Words: ${wordCount} / ${maxWords}`;
+    
+    // UI Feedback: Agar limit reach ho jaye toh red color dikhana
+    document.getElementById('wordCount').style.color = wordCount >= maxWords ? 'var(--red)' : 'var(--text-muted)';
+};
+        
     </script>
 </body>
 </html>
