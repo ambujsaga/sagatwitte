@@ -8,7 +8,7 @@
     <link rel="apple-touch-icon" sizes="192x192" href="logo.jpg?v=1.1">
     <link rel="manifest" href="manifest.json">
 
-     <style>
+    <style>
         /* --- DESKTOP OPTIMIZATION --- */
         @media (min-width: 768px) {
             .container { max-width: 700px; margin: 30px auto; }
@@ -38,6 +38,7 @@
             --neon-shadow: 0 0 15px rgba(0, 229, 255, 0.6);
         }
 
+        /* --- LIGHT MODE THEME --- */
         body.light-mode {
             --bg: #f0f2f5;
             --card-bg: #ffffff;
@@ -57,69 +58,73 @@
             transition: background 0.3s ease;
         }
 
-        /* --- CRITICAL GLITCH FIX: LOADER Z-INDEX --- */
+        /* --- LOADER CSS --- */
         #loader-screen {
-            position: fixed; 
-            inset: 0; 
-            background: #030a1a;
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; 
-            z-index: 10000; /* Loader must be above everything */
-            transition: opacity 0.6s ease, visibility 0.6s ease;
+            position: fixed; inset: 0; background: #030a1a;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999;
         }
 
+        .loader-visual {
+            position: relative; width: 120px; height: 120px;
+            display: flex; align-items: center; justify-content: center; margin-bottom: 30px;
+        }
+
+        .planet {
+            width: 40px; height: 40px; background: var(--primary);
+            border-radius: 50%; box-shadow: 0 0 40px var(--primary), inset 0 0 15px rgba(255,255,255,0.8);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .orbit {
+            position: absolute; width: 100px; height: 100px;
+            border: 1px solid rgba(0, 229, 255, 0.2); border-radius: 50%;
+            animation: spin 3s linear infinite;
+        }
+
+        .loading-text { text-align: center; display: flex; flex-direction: column; align-items: center; }
+        .loading-text .logo {
+            font-size: 32px; letter-spacing: 5px; margin: 0;
+            background: linear-gradient(90deg, #fff, var(--primary), #fff);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-size: 200%; animation: shine 3s linear infinite;
+        }
+
+        .progress-bar { width: 150px; height: 2px; background: rgba(255,255,255,0.1); margin-top: 15px; border-radius: 10px; overflow: hidden; }
+        .progress-fill { width: 0%; height: 101%; background: var(--primary); animation: loadFill 2.5s ease-in-out forwards; }
+
+        @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 0.8; } 50% { transform: scale(1.1); opacity: 1; } }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        @keyframes shine { 100% { background-position: 200%; } }
+        @keyframes loadFill { 0% { width: 0%; } 100% { width: 100%; } }
+
+        /* --- LAYOUT & CARDS --- */
         header { 
-            background: var(--card-bg); 
-            backdrop-filter: blur(15px); 
-            -webkit-backdrop-filter: blur(15px);
-            padding: 15px 20px; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            border-bottom: 1px solid rgba(0, 229, 255, 0.15); 
-            position: sticky; 
-            top: 0; 
-            z-index: 1000; 
+            background: var(--card-bg); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; 
+            border-bottom: 1px solid rgba(0, 229, 255, 0.15); position: sticky; top: 0; z-index: 1000; 
         }
 
         .logo { font-size: 24px; font-weight: 800; color: var(--primary); cursor: pointer; text-shadow: var(--neon-shadow); }
         .container { width: 95%; max-width: 500px; margin: 15px auto; }
         
         .card { 
-            background: var(--card-bg); 
-            padding: 20px; 
-            border-radius: 20px; 
-            border: 1px solid rgba(0, 229, 255, 0.1); 
-            margin-bottom: 20px; 
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            backdrop-filter: blur(10px);
+            background: var(--card-bg); padding: 20px; border-radius: 20px; 
+            border: 1px solid rgba(0, 229, 255, 0.1); margin-bottom: 20px; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2); backdrop-filter: blur(10px);
         }
 
         input, textarea { 
-            width: 100%; 
-            background: rgba(255, 255, 255, 0.05); 
-            border: 1px solid rgba(255, 255, 255, 0.1); 
-            border-radius: 12px; 
-            padding: 12px; 
-            color: var(--text-main); 
-            box-sizing: border-box; 
-            outline: none; 
+            width: 100%; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); 
+            border-radius: 12px; padding: 12px; color: var(--text-main); box-sizing: border-box; outline: none; 
         }
         
         button { cursor: pointer; border: none; border-radius: 12px; padding: 10px 15px; font-weight: bold; }
         .btn-primary { background: var(--primary); color: #fff; width: 100%; box-shadow: var(--neon-shadow); }
 
         .fab { 
-            position: fixed; bottom: 35px; right: 25px; 
-            width: 60px; height: 60px; 
-            background: var(--primary); 
-            border-radius: 50%; 
-            display: flex; align-items: center; justify-content: center; 
-            color: #fff; 
-            box-shadow: var(--neon-shadow); 
-            z-index: 999; cursor: pointer; 
+            position: fixed; bottom: 35px; right: 25px; width: 60px; height: 60px; 
+            background: var(--primary); border-radius: 50%; display: flex; align-items: center; 
+            justify-content: center; color: #fff; box-shadow: var(--neon-shadow); z-index: 2000; cursor: pointer; 
         }
 
         .p-pic { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; }
@@ -139,54 +144,7 @@
         .stat-val { display: block; font-size: 28px; font-weight: 800; color: var(--primary); }
         #search-row { display: none; padding: 15px; background: var(--card-bg); border-bottom: 1px solid var(--primary); }
 
-        .theme-toggle {
-            background: rgba(255,255,255,0.1);
-            color: var(--text-main);
-            width: 100%;
-            margin-bottom: 10px;
-            border: 1px solid var(--primary);
-        }
-
-        /* --- LOADER CSS --- */
-        .loader-visual { position: relative; width: 120px; height: 120px; display: flex; align-items: center; justify-content: center; margin-bottom: 30px; }
-        .planet { width: 40px; height: 40px; background: var(--primary); border-radius: 50%; box-shadow: 0 0 40px var(--primary), inset 0 0 15px rgba(255,255,255,0.8); animation: pulse 2s ease-in-out infinite; }
-        .orbit { position: absolute; width: 100px; height: 100px; border: 1px solid rgba(0, 229, 255, 0.2); border-radius: 50%; animation: spin 3s linear infinite; }
-        .loading-text { text-align: center; display: flex; flex-direction: column; align-items: center; }
-        .loading-text .logo { font-size: 32px; letter-spacing: 5px; margin: 0; background: linear-gradient(90deg, #fff, var(--primary), #fff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-size: 200%; animation: shine 3s linear infinite; }
-        .progress-bar { width: 150px; height: 2px; background: rgba(255,255,255,0.1); margin-top: 15px; border-radius: 10px; overflow: hidden; }
-        .progress-fill { width: 0%; height: 101%; background: var(--primary); animation: loadFill 2.5s ease-in-out forwards; }
-
-        @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 0.8; } 50% { transform: scale(1.1); opacity: 1; } }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-        @keyframes shine { 100% { background-position: 200%; } }
-        @keyframes loadFill { 0% { width: 0%; } 100% { width: 100%; } }
-
-        /* --- INSTALL BUTTON STYLE --- */
-        #custom-install-btn {
-            display: none;
-            background: var(--primary);
-            color: #030a1a;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 12px;
-            margin-right: 10px;
-            box-shadow: var(--neon-shadow);
-        }
-
-        /* --- POST MODAL FIX --- */
-        #post-modal {
-            display:none; 
-            position:fixed; 
-            inset:0; 
-            background:rgba(3, 10, 26, 0.98); 
-            z-index: 5000; 
-            align-items:center; 
-            justify-content:center;
-            backdrop-filter: blur(20px);
-        }
+        .theme-toggle { background: rgba(255,255,255,0.1); color: var(--text-main); width: 100%; margin-bottom: 10px; border: 1px solid var(--primary); }
     </style>
 </head>
 <body>
@@ -194,7 +152,7 @@
     <div id="loader-screen">
         <div class="loader-visual">
             <div class="planet"></div>
-            <div class="orbit"></div>
+            <div class="orbit"><div class="satellite"></div></div>
         </div>
         <div class="loading-text">
             <h1 class="logo">The Jaya</h1>
@@ -214,14 +172,11 @@
     <div id="main-app" style="display:none;">
         <header>
             <div class="logo" onclick="navTo('home')">The Jaya</div>
-            <div style="display:flex; align-items:center;">
-                <button id="custom-install-btn">Install App</button>
-                <div style="display:flex; align-items:center; gap:18px;">
-                    <span onclick="requireLogin(toggleSearch)" style="cursor:pointer; display: flex; color: var(--text-muted);">
-                        <svg viewBox="0 0 24 24"><path d="M21.71 20.29l-1.42 1.42a1 1 0 01-1.42 0l-4.52-4.52A7.89 7.89 0 019 19a8 8 0 118-8 7.89 7.89 0 01-1.81 4.35l4.52 4.52a1 1 0 010 1.42zM4 11a7 7 0 1014 0 7 7 0 00-14 0z"/></svg>
-                    </span>
-                    <img id="head-pic" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" class="p-pic" onclick="requireLogin(() => navTo('profile', true))" style="cursor:pointer; border:2px solid var(--primary);">
-                </div>
+            <div style="display:flex; align-items:center; gap:18px;">
+                <span onclick="requireLogin(toggleSearch)" style="cursor:pointer; display: flex; color: var(--text-muted);">
+                    <svg viewBox="0 0 24 24"><path d="M21.71 20.29l-1.42 1.42a1 1 0 01-1.42 0l-4.52-4.52A7.89 7.89 0 019 19a8 8 0 118-8 7.89 7.89 0 01-1.81 4.35l4.52 4.52a1 1 0 010 1.42zM4 11a7 7 0 1014 0 7 7 0 00-14 0z"/></svg>
+                </span>
+                <img id="head-pic" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" class="p-pic" onclick="requireLogin(() => navTo('profile', true))" style="cursor:pointer; border:2px solid var(--primary);">
             </div>
         </header>
 
@@ -263,20 +218,21 @@
         </div>
     </div>
 
-    <div id="post-modal">
-        <div class="container" style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px;"><div class="card">
-            <h3 style="margin:0 0 20px 0;">New Post</h3>
-            <textarea id="postInput" rows="5" placeholder="What's happening?"></textarea>
-            <div style="display:flex; flex-wrap: wrap; gap:10px; margin-top:20px;">
-                <button class="btn-primary" onclick="doPost()" style="flex: 1 1 100%;">Post Now</button>
-                <button onclick="setPostModal(false)" style="background:rgba(255,255,255,0.1); color:var(--text-main); flex: 1;">Cancel</button>
-                <button onclick="pasteText()" style="background:var(--card-bg); color:var(--primary); border:1px solid var(--primary); flex: 1;">Paste</button>
-                
-                <a href="https://quote-bot--ambujewns404.replit.app" target="_blank" style="text-decoration: none; width: 100%; display: block; margin-top: 10px;">
+    <div id="post-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:3000; align-items:center; justify-content:center;">
+        <div class="container" style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px;">
+            <div class="card">
+                <h3 style="margin:0 0 20px 0;">New Post</h3>
+                <textarea id="postInput" rows="5" placeholder="What's happening?"></textarea>
+                <div style="display:flex; gap:10px; margin-top:20px;">
+                    <button class="btn-primary" onclick="doPost()">Post Now</button>
+                    <button onclick="setPostModal(false)" style="background:rgba(255,255,255,0.1); color:var(--text-main);">Cancel</button>
+                    <button onclick="pasteText()" style="background:var(--card-bg); color:var(--primary); border:1px solid var(--primary); width: auto;">Paste</button>
+                </div>
+                <a href="https://quote-bot--ambujewns404.replit.app" target="_blank" style="text-decoration: none; display: block; margin-top: 15px; text-align: center;">
                     <button style="background: rgba(0, 229, 255, 0.1); color: var(--primary); border: 1px solid var(--primary); width: 100%;">✨ AI Notes</button>
                 </a>
             </div>
-        </div></div>
+        </div>
     </div>
 
     <script type="module">
@@ -284,33 +240,6 @@
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, doc, updateDoc, arrayUnion, deleteDoc, getDoc, setDoc, where, getDocs, arrayRemove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // --- PWA SERVICE WORKER ---
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js').then(reg => {
-                    console.log('SW Registered');
-                }).catch(err => console.log('SW Failed', err));
-            });
-        }
-
-        // --- INSTALL LOGIC ---
-        let deferredPrompt;
-        const installBtn = document.getElementById('custom-install-btn');
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            installBtn.style.display = 'block';
-        });
-        installBtn.addEventListener('click', async () => {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                if (outcome === 'accepted') installBtn.style.display = 'none';
-                deferredPrompt = null;
-            }
-        });
-
-        // Firebase Configuration
         const conf = { 
             apiKey: "AIzaSyC2DSzlGsl5y3NwgOpgIOC-1OUYyKEaZ5k", 
             authDomain: "saga-social-a13a4.firebaseapp.com", 
@@ -324,27 +253,16 @@
         const gProv = new GoogleAuthProvider();
         let me = null;
 
-        // --- CRITICAL LOADER FIX: DISCARD ELEMENT ---
         window.addEventListener('load', () => {
-            setTimeout(() => {
-                const loader = document.getElementById('loader-screen');
-                loader.style.opacity = '0';
-                loader.style.visibility = 'hidden';
-                setTimeout(() => {
-                    loader.style.display = 'none';
-                    // Completely remove it to prevent any click-jacking glitches
-                    if (loader.parentNode) loader.parentNode.removeChild(loader);
-                }, 600);
-            }, 3000);
+            setTimeout(() => { document.getElementById('loader-screen').style.display = 'none'; }, 3000);
         });
 
         window.pasteText = async () => {
             try {
                 const text = await navigator.clipboard.readText();
                 const input = document.getElementById('postInput');
-                input.value += text; 
-                input.focus();
-            } catch (err) { alert("Please allow clipboard access"); }
+                input.value += text; input.focus();
+            } catch (err) { console.error("Clipboard access denied", err); }
         };
         
         window.toggleTheme = () => {
@@ -390,11 +308,7 @@
         document.getElementById('guest-trigger').onclick = showGuestFeed;
 
         window.requireLogin = (cb) => {
-            if(!auth.currentUser) {
-                alert("Please login first!");
-                document.getElementById('main-app').style.display = 'none';
-                document.getElementById('auth-section').style.display = 'block';
-            } else cb();
+            if(!auth.currentUser) { alert("Please login first!"); } else cb();
         };
 
         window.navTo = (v, isMe = true, other = null) => {
@@ -469,10 +383,10 @@
         };
 
         window.checkEditUsername = async () => {
-            const now = Date.now();
-            if(now - me.lastChange < 7*24*60*60*1000) return alert("Please wait 7 days!");
+            const diff = Date.now() - me.lastChange;
+            if(diff < 7*24*60*60*1000) return alert("Please wait 7 days!");
             const newU = prompt("New username:").toLowerCase().replace(/\s+/g,'');
-            if(newU) { await updateDoc(doc(db, "users", auth.currentUser.uid), { username: newU, lastChange: now }); location.reload(); }
+            if(newU) { await updateDoc(doc(db, "users", auth.currentUser.uid), { username: newU, lastChange: Date.now() }); location.reload(); }
         };
 
         window.doPost = async () => {
@@ -507,10 +421,12 @@
         };
 
         window.delPost = async (id) => { if(confirm("Delete this post?")) await deleteDoc(doc(db, "posts", id)); };
-        window.toggleSearch = () => { const r = document.getElementById('search-row'); r.style.display = (r.style.display === 'block' ? 'none' : 'block'); };
-        window.toggleComs = (id) => { const d = document.getElementById('drawer-'+id); d.style.display = (d.style.display === 'block' ? 'none' : 'block'); };
+        window.toggleSearch = () => { const r = document.getElementById('search-row'); r.style.display = r.style.display === 'block'?'none':'block'; };
+        window.toggleComs = (id) => { const d = document.getElementById('drawer-'+id); d.style.display = d.style.display === 'block'?'none':'block'; };
         window.setPostModal = (s) => document.getElementById('post-modal').style.display = s?'flex':'none';
-        
+        window.logout = () => { signOut(auth); location.reload(); };
+        document.getElementById('googleLogin').onclick = () => signInWithPopup(auth, gProv);
+
         window.sharePost = async (text, username) => {
             const shareText = `"${text}"\n\n~by @${username} on The Jaya\n\nCheckout here:`;
             const shareUrl = window.location.href;
@@ -518,12 +434,9 @@
                 try { await navigator.share({ title: 'The Jaya Post', text: shareText, url: shareUrl }); } catch (err) {}
             } else {
                 navigator.clipboard.writeText(`${shareText} ${shareUrl}`);
-                alert("Link & Text copied!");
+                alert("Link & Text copied to clipboard!");
             }
         };
-
-        window.logout = () => { signOut(auth); location.reload(); };
-        document.getElementById('googleLogin').onclick = () => signInWithPopup(auth, gProv);
     </script>
 </body>
 </html>
