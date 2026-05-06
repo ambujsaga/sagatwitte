@@ -58,45 +58,6 @@
             transition: background 0.3s ease;
         }
 
-        #loader-screen {
-            position: fixed; inset: 0; background: #030a1a; 
-            display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999;
-        }
-
-        .loader-visual {
-            position: relative; width: 120px; height: 120px;
-            display: flex; align-items: center; justify-content: center; margin-bottom: 30px;
-        }
-
-        .planet {
-            width: 40px; height: 40px; background: var(--primary);
-            border-radius: 50%; box-shadow: 0 0 40px var(--primary), inset 0 0 15px rgba(255,255,255,0.8);
-            animation: pulse 2s ease-in-out infinite;
-        }
-
-        .orbit {
-            position: absolute; width: 100px; height: 100px;
-            border: 1px solid rgba(0, 229, 255, 0.2); border-radius: 50%;
-            animation: spin 3s linear infinite;
-        }
-
-        .loading-text { text-align: center; display: flex; flex-direction: column; align-items: center; }
-        
-        .loading-text .logo {
-            font-size: 32px; letter-spacing: 5px; margin: 0;
-            background: linear-gradient(90deg, #fff, var(--primary), #fff);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            background-size: 200%; animation: shine 3s linear infinite;
-        }
-
-        .progress-bar { width: 150px; height: 2px; background: rgba(255,255,255,0.1); margin-top: 15px; border-radius: 10px; overflow: hidden; }
-        .progress-fill { width: 0%; height: 101%; background: var(--primary); animation: loadFill 2.5s ease-in-out forwards; }
-
-        @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 0.8; } 50% { transform: scale(1.1); opacity: 1; } }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-        @keyframes shine { 100% { background-position: 200%; } }
-        @keyframes loadFill { 0% { width: 0%; } 100% { width: 100%; } }
-
         header { 
             background: var(--card-bg); 
             backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
@@ -128,17 +89,6 @@
     </style>
 </head>
 <body>
-
-    <div id="loader-screen">
-        <div class="loader-visual">
-            <div class="planet"></div>
-            <div class="orbit"></div>
-        </div>
-        <div class="loading-text">
-            <h1 class="logo">The Jaya</h1>
-            <div class="progress-bar"><div class="progress-fill"></div></div>
-        </div>
-    </div>
 
     <div id="auth-section" style="display:none; text-align:center; padding-top:100px;">
         <h1 class="logo" style="font-size:45px;">The Jaya</h1>
@@ -229,10 +179,6 @@
         const db = getFirestore(app);
         const gProv = new GoogleAuthProvider();
         let me = null;
-
-        window.addEventListener('load', () => {
-            setTimeout(() => { document.getElementById('loader-screen').style.display = 'none'; }, 3000);
-        });
 
         window.pasteText = async () => {
             try {
