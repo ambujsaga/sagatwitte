@@ -555,6 +555,37 @@ window.pasteText = async () => {
             }
         };
         // -----------------------------
+     <script type="module">
+      let deferredPrompt;
+const installBtn = document.getElementById('custom-install-btn');
+
+// 1. Browser se install prompt ko capture karna
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault(); // Default prompt roko
+    deferredPrompt = e;  // Event save karo
+    installBtn.style.display = 'block'; // Apna button dikhao
+});
+
+// 2. Button click hone par install prompt dikhana
+installBtn.addEventListener('click', async () => {
+    if (deferredPrompt) {
+        deferredPrompt.prompt(); // Prompt dikhao
+        const { outcome } = await deferredPrompt.userChoice;
+        
+        if (outcome === 'accepted') {
+            installBtn.style.display = 'none'; // Install hone ke baad button chhupao
+        }
+        deferredPrompt = null;
+    }
+});
+
+// 3. Agar app pehle se installed hai toh button mat dikhao
+window.addEventListener('appinstalled', () => {
+    installBtn.style.display = 'none';
+    deferredPrompt = null;
+    console.log('PWA installed successfully');
+});
+    </script>
     </script>
 </body>
 </html>
