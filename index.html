@@ -88,11 +88,6 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
             backdrop-filter: blur(10px);
         }
-         .card p {
-    overflow-wrap: break-word;
-    word-break: break-word;
-    white-space: pre-wrap;
-            }
 
         input, textarea { 
             width: 100%; 
@@ -245,8 +240,6 @@
                     </div>
                 </div>
                 <div id="u-feed"></div>
-                <p style="margin: 0; line-height:1.5; overflow-wrap: break-word; word-break: break-word; white-space: pre-wrap;"></p>
-            
             </div>
         </div>
 
@@ -259,8 +252,8 @@
         <div class="container" style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px;"><div class="card">
             <h3 style="margin:0 0 20px 0;">New Post</h3>
             <textarea id="postInput" rows="5" placeholder="What's happening?"></textarea>
-<p id="word-count" style="font-size: 12px; color: var(--text-muted); margin: 5px 0; text-align: right;">0 / 110 words</p>
-   <div style="display:flex; gap:10px; margin-top:20px;">
+            <p id="word-count" style="font-size: 12px; color: var(--text-muted); margin: 5px 0; text-align: right;">0 / 110 characters</p>
+            <div style="display:flex; gap:10px; margin-top:20px;">
                 <button class="btn-primary" onclick="doPost()">Post Now</button>
                 <button onclick="setPostModal(false)" style="background:rgba(255,255,255,0.1); color:var(--text-main);">Cancel</button>
                 <button onclick="pasteText()" style="background:var(--card-bg); color:var(--primary); border:1px solid var(--primary); width: auto;">Paste</button>
@@ -331,17 +324,6 @@
             }, 3000);
         });
 
-        window.pasteText = async () => {
-            try {
-                const text = await navigator.clipboard.readText();
-                const input = document.getElementById('postInput');
-                input.value += text; 
-                input.focus();
-            } catch (err) {
-                console.error("Clipboard access denied", err);
-            }
-        };
-        
         // THEME LOGIC
         window.toggleTheme = () => {
             document.body.classList.toggle('light-mode');
@@ -510,7 +492,6 @@
         window.delPost = async (id) => { if(confirm("Delete this post?")) await deleteDoc(doc(db, "posts", id)); };
         window.toggleSearch = () => { const r = document.getElementById('search-row'); r.style.display = r.style.display === 'block'?'none':'block'; };
         window.toggleComs = (id) => { const d = document.getElementById('drawer-'+id); d.style.display = d.style.display === 'block'?'none':'block'; };
-        window.setPostModal = (s) => document.getElementById('post-modal').style.display = s?'flex':'none';
         
         window.sharePost = async (text, username) => {
             const shareText = `"${text}"\n\n~by @${username} on The Jaya\n\nCheckout here:`;
@@ -526,48 +507,43 @@
         window.logout = () => { signOut(auth); location.reload(); };
         document.getElementById('googleLogin').onclick = () => signInWithPopup(auth, gProv);
 
+        // --- UPDATED LIVE CHARACTER & SPACE COUNT LOGIC (LIMIT: 110) ---
         const postInput = document.getElementById('postInput');
-const wordCountDisplay = document.getElementById('word-count');
-const WORD_LIMIT = 110;
+        const wordCountDisplay = document.getElementById('word-count');
+        const CHAR_LIMIT = 110; 
 
-const updateWordCount = () => {
-    // Text ko shabdon mein todna (extra spaces hata kar)
-    let words = postInput.value.trim().split(/\s+/).filter(word => word.length > 0);
-    
-    if (words.length > WORD_LIMIT) {
-        // Agar limit cross hui to pehle 110 words ko wapas set karna
-        const trimmedText = words.slice(0, WORD_LIMIT).join(' ');
-        postInput.value = trimmedText;
-        
-        // Dubara count update karna trim hone ke baad
-        words = postInput.value.trim().split(/\s+/).filter(word => word.length > 0);
-        
-        // User ko alert dena (Optional)
-        wordCountDisplay.style.color = "var(--red)";
-    } else {
-        wordCountDisplay.style.color = "var(--text-muted)";
-    }
-
-    // UI par counter dikhana
-    wordCountDisplay.innerText = `${words.length} / ${WORD_LIMIT} words`;
-};
-
-// Input event listener (Typing ke liye)
-postInput.addEventListener('input', updateWordCount);
-
-// Paste function ko bhi update karein taaki counter turant chale
-window.pasteText = async () => {
-    try {
-        const text = await navigator.clipboard.readText();
-        const input = document.getElementById('postInput');
-        input.value += text; 
-        updateWordCount(); // Paste ke baad count update
-        input.focus();
-    } catch (err) {
-        console.error("Clipboard access denied", err);
-    }
-};
+        const updateCharCount = () => {
+            let content = postInput.value;
             
+            if (content.length > CHAR_LIMIT) {
+                postInput.value = content.substring(0, CHAR_LIMIT);
+                wordCountDisplay.style.color = "var(--red)";
+            } else {
+                wordCountDisplay.style.color = "var(--text-muted)";
+            }
+            wordCountDisplay.innerText = `${postInput.value.length} / ${CHAR_LIMIT} characters`;
+        };
+
+        postInput.addEventListener('input', updateCharCount);
+
+        window.pasteText = async () => {
+            try {
+                const text = await navigator.clipboard.readText();
+                postInput.value += text; 
+                updateCharCount();
+                postInput.focus();
+            } catch (err) {
+                console.error("Clipboard error", err);
+            }
+        };
+
+        window.setPostModal = (s) => {
+            document.getElementById('post-modal').style.display = s ? 'flex' : 'none';
+            if(s) {
+                postInput.focus();
+                updateCharCount(); 
+            }
+        };
     </script>
 </body>
 </html>
