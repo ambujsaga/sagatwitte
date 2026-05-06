@@ -88,6 +88,11 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
             backdrop-filter: blur(10px);
         }
+         .card p {
+    overflow-wrap: break-word;
+    word-break: break-word;
+    white-space: pre-wrap;
+            }
 
         input, textarea { 
             width: 100%; 
@@ -240,6 +245,8 @@
                     </div>
                 </div>
                 <div id="u-feed"></div>
+                <p style="margin: 0; line-height:1.5; overflow-wrap: break-word; word-break: break-word; white-space: pre-wrap;">${p.text}</p>
+                
             </div>
         </div>
 
