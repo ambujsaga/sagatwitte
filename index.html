@@ -529,32 +529,30 @@
         const WORD_LIMIT = 110;
 
         const updateWordCount = () => {
-            let words = postInput.value.trim().split(/\s+/).filter(word => word.length > 0);
-            
-            if (words.length > WORD_LIMIT) {
-                const trimmedText = words.slice(0, WORD_LIMIT).join(' ');
-                postInput.value = trimmedText;
-                words = postInput.value.trim().split(/\s+/).filter(word => word.length > 0);
-                wordCountDisplay.style.color = "var(--red)";
-            } else {
-                wordCountDisplay.style.color = "var(--text-muted)";
-            }
-            wordCountDisplay.innerText = `${words.length} / ${WORD_LIMIT} words`;
-        };
+    const val = postInput.value;
+    // Yeh line har ek word ko accurately count karegi
+    const words = val.match(/\S+/g) || []; 
+    
+    if (words.length > WORD_LIMIT) {
+        // Agar 110 se zyada words hain, toh extra ko trim karega
+        const trimmedText = val.split(/\s+/).slice(0, WORD_LIMIT).join(' ');
+        postInput.value = trimmedText;
+        
+        // Trim ke baad final count check
+        const finalWords = postInput.value.match(/\S+/g) || [];
+        wordCountDisplay.innerText = `${finalWords.length} / ${WORD_LIMIT} words`;
+        wordCountDisplay.style.color = "var(--red)";
+    } else {
+        wordCountDisplay.innerText = `${words.length} / ${WORD_LIMIT} words`;
+        wordCountDisplay.style.color = "var(--text-muted)";
+    }
+};
 
-        postInput.addEventListener('input', updateWordCount);
+// Yeh teenon listeners zaroori hain live result ke liye
+postInput.addEventListener('input', updateWordCount);
+postInput.addEventListener('keyup', updateWordCount);
+postInput.addEventListener('change', updateWordCount);
 
-        window.pasteText = async () => {
-            try {
-                const text = await navigator.clipboard.readText();
-                const input = document.getElementById('postInput');
-                input.value += text; 
-                updateWordCount();
-                input.focus();
-            } catch (err) {
-                console.error("Clipboard access denied", err);
-            }
-        };
             
     </script>
 </body>
