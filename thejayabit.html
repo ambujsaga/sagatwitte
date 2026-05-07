@@ -82,9 +82,31 @@
         let nextPageToken = '';
         let isFetching = false;
 
-        // Refresh par video badalne ke liye random region codes
         const regions = ['IN', 'US', 'GB', 'JP', 'BR', 'KR', 'FR'];
         const randomRegion = regions[Math.floor(Math.random() * regions.length)];
+
+        // --- Intersection Observer Setup ---
+        const observerOptions = {
+            root: container,
+            threshold: 0.8 // Jab video 80% se zyada dikhega tabhi play hoga
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const iframe = entry.target.querySelector('iframe');
+                if (iframe && iframe.contentWindow) {
+                    if (entry.isIntersecting) {
+                        // Play and Unmute current video
+                        iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+                        iframe.contentWindow.postMessage('{"event":"command","func":"unMute","args":""}', '*');
+                    } else {
+                        // Pause and Mute hidden video
+                        iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+                        iframe.contentWindow.postMessage('{"event":"command","func":"mute","args":""}', '*');
+                    }
+                }
+            });
+        }, observerOptions);
 
         async function fetchVideos(pageToken = '') {
             if (isFetching) return;
@@ -92,7 +114,6 @@
             loader.style.display = 'block';
 
             try {
-                // randomRegion variable add kiya gaya hai taaki har baar feed alag aaye
                 const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails,status&chart=mostPopular&maxResults=10&regionCode=${randomRegion}&key=${API_KEY}&pageToken=${pageToken}`;
                 const response = await fetch(url);
                 const data = await response.json();
@@ -118,11 +139,10 @@
                 const reel = document.createElement('div');
                 reel.classList.add('reel-card');
                 
-                // Audio FIX: 'mute=0' kiya gaya hai
                 reel.innerHTML = `
                     <div class="video-wrapper">
                         <iframe 
-                            src="https://www.youtube.com/embed/${id}?autoplay=1&mute=0&controls=0&loop=1&playlist=${id}&enablejsapi=1&modestbranding=1&rel=0" 
+                            src="https://www.youtube.com/embed/${id}?enablejsapi=1&autoplay=1&mute=1&controls=0&loop=1&playlist=${id}&modestbranding=1&rel=0" 
                             allow="autoplay; encrypted-media"
                             allowfullscreen>
                         </iframe>
@@ -133,6 +153,8 @@
                     </div>
                 `;
                 container.appendChild(reel);
+                // Har naye reel ko observe karna shuru karein
+                observer.observe(reel);
             });
         }
 
@@ -144,15 +166,14 @@
 
         fetchVideos();
 
-        // Audio Activation: Browser bina interaction ke sound play nahi karne deta
-        // Screen par kahin bhi ek baar click/touch karte hi saare videos unmute aur play ho jayenge
+        // Pehli baar user interaction par audio enable karne ke liye
         document.body.addEventListener('click', function() {
-            const iframes = document.querySelectorAll('iframe');
-            iframes.forEach(i => {
-                // 'unMute' command bheja gaya hai
-                i.contentWindow.postMessage('{"event":"command","func":"unMute","args":""}', '*');
-                i.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
-            });
+            const activeReel = document.querySelector('.reel-card'); // Pehla reel
+            if(activeReel) {
+                const iframe = activeReel.querySelector('iframe');
+                iframe.contentWindow.postMessage('{"event":"command","func":"unMute","args":""}', '*');
+                iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+            }
         }, {once: true});
     </script>
 </body>
