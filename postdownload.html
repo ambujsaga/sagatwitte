@@ -111,7 +111,6 @@
         
         .action-bar { display: flex; justify-content: center; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px; margin-top: 15px; }
         
-        /* Enlarged Download Button */
         .download-btn { 
             background: var(--primary); 
             color: #030a1a; 
@@ -253,12 +252,16 @@
                 s.forEach(d => {
                     const p = d.data();
                     if(uid) { stars += (p.stars?.length || 0); posts++; }
+                    
+                    // Profile Pic Fix
+                    const userPic = p.pic || p.photoURL || defaultAvtr;
+
                     const el = document.createElement('div');
                     el.className = 'card';
                     el.id = `post-card-${d.id}`;
                     el.innerHTML = `
                         <div style="display:flex; align-items:center; gap:12px; margin-bottom:15px;">
-                            <img src="${p.pic || defaultAvtr}" class="p-pic">
+                            <img src="${userPic}" class="p-pic" onerror="this.src='${defaultAvtr}'">
                             <div class="user-info">
                                 <strong onclick="findUserByUname('${p.username}')" style="cursor:pointer;">@${p.username}</strong>
                                 <span class="post-time">${timeAgo(p.time)}</span>
@@ -283,14 +286,19 @@
             const postElement = document.getElementById(`post-card-${postId}`);
             const watermark = postElement.querySelector('.watermark');
             const actionBar = postElement.querySelector('.action-bar');
+            const timeElement = postElement.querySelector('.post-time');
             
+            // Post time aur button hide karne ke liye
             watermark.style.display = 'block';
             actionBar.style.display = 'none';
+            if(timeElement) timeElement.style.visibility = 'hidden';
 
-            const canvas = await html2canvas(postElement, { backgroundColor: '#030a1a', scale: 2 });
+            const canvas = await html2canvas(postElement, { backgroundColor: '#030a1a', scale: 2, useCORS: true });
             
+            // Download ke baad wapas dikhane ke liye
             watermark.style.display = 'none';
             actionBar.style.display = 'flex';
+            if(timeElement) timeElement.style.visibility = 'visible';
 
             const link = document.createElement('a');
             link.download = `TheJaya-${postId}.png`;
