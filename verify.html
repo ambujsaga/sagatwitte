@@ -1,103 +1,184 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Jaya - Red Tick Edition</title>
     <style>
-        /* Naya Red Tick CSS */
-        .red-tick { color: #ff4444; font-weight: bold; margin-left: 5px; }
-        
-        /* Toggle Switch Styling */
-        .switch { position: relative; display: inline-block; width: 50px; height: 24px; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; inset: 0; background: #333; transition: .4s; border-radius: 34px; }
-        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background: white; transition: .4s; border-radius: 50%; }
-        input:checked + .slider { background: #ff4444; }
-        input:checked + .slider:before { transform: translateX(26px); }
+        /* --- AAPKA EXISTING CSS --- */
+        :root { 
+            --primary: #00e5ff; 
+            --bg: #030a1a; 
+            --card-bg: rgba(6, 17, 39, 0.7); 
+            --text-main: #ffffff; 
+            --text-muted: #8a99b3;
+            --red: #ff4444; 
+            --neon-shadow: 0 0 15px rgba(0, 229, 255, 0.6);
+        }
 
-        .admin-box { background: rgba(255,255,255,0.05); padding: 20px; border-radius: 15px; border: 1px solid var(--primary); margin-top: 20px; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text-main); margin: 0; padding-bottom: 100px; }
+        .container { width: 95%; max-width: 500px; margin: 15px auto; }
+        .card { background: var(--card-bg); padding: 20px; border-radius: 20px; border: 1px solid rgba(0, 229, 255, 0.1); margin-bottom: 20px; backdrop-filter: blur(10px); }
+        .btn-primary { background: var(--primary); color: #fff; width: 100%; padding: 12px; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; }
+        input { width: 100%; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 12px; color: #fff; margin-bottom: 10px; box-sizing: border-box; }
+        
+        /* --- NEW RED TICK & TOGGLE CSS --- */
+        .red-tick { color: var(--red); width: 16px; height: 16px; vertical-align: middle; margin-left: 4px; }
+        
+        .switch-container { display: flex; align-items: center; justify-content: space-between; background: rgba(255, 68, 68, 0.1); padding: 15px; border-radius: 15px; border: 1px solid var(--red); margin-top: 15px; }
+        .switch { position: relative; display: inline-block; width: 50px; height: 26px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #333; transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--red); }
+        input:checked + .slider:before { transform: translateX(24px); }
+
+        /* Loader & Others (Previous Code) */
+        header { background: var(--card-bg); padding: 15px 20px; display: flex; justify-content: space-between; position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid rgba(0, 229, 255, 0.15); }
+        .logo { font-size: 24px; font-weight: 800; color: var(--primary); text-shadow: var(--neon-shadow); }
+        .p-pic { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); }
     </style>
 </head>
 <body>
-    <div id="main-app" style="display:none;">
-        <div class="container">
-            <div id="profile-view" class="card">
-                <div style="text-align:center;">
-                    <img id="u-img" style="width:110px; height:110px; border-radius:50%; border:3px solid var(--primary);">
-                    <h2 id="u-name">@username <span id="admin-tick-preview"></span></h2>
-                    
-                    <div class="admin-box">
-                        <h3>Admin Control Panel</h3>
-                        <p style="font-size:12px; color:var(--text-muted);">Yahan se Red Tick control karein. Yeh live site par realtime dikhega.</p>
-                        
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin: 20px 0;">
-                            <span>Global Red Tick Status:</span>
-                            <label class="switch">
-                                <input type="checkbox" id="global-tick-toggle" onchange="syncTickToLiveSite()">
-                                <span class="slider"></span>
-                            </label>
-                        </div>
-                        <p id="sync-status" style="font-size:11px; color:var(--primary);"></p>
+
+    <header>
+        <div class="logo">The Jaya</div>
+        <img id="head-pic" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" class="p-pic" onclick="showProfile()">
+    </header>
+
+    <div class="container">
+        <div id="home-view">
+            <div id="feed"></div>
+        </div>
+
+        <div id="profile-view" style="display:none;" class="card">
+            <button onclick="showHome()" style="background:none; border:none; color:#fff; cursor:pointer;">← Back</button>
+            <div style="text-align:center;">
+                <img id="u-img" style="width:100px; height:100px; border-radius:50%; border:3px solid var(--primary);">
+                <h2 id="u-display-name">@username</h2>
+                
+                <div class="card" style="margin-top: 20px; text-align: left; border-color: var(--red);">
+                    <h4 style="margin: 0 0 10px 0; color: var(--red);">Red Tick Verification</h4>
+                    <input type="text" id="verify-uname" placeholder="Confirm Username">
+                    <input type="email" id="verify-email" placeholder="Verification Email">
+                    <div class="switch-container">
+                        <span>Activate Red Tick</span>
+                        <label class="switch">
+                            <input type="checkbox" id="tick-toggle" onchange="toggleRedTick()">
+                            <span class="slider"></span>
+                        </label>
                     </div>
                 </div>
+                
+                <button onclick="logout()" style="background:var(--red); color:#fff; width:100%; border:none; padding:10px; border-radius:10px; cursor:pointer;">Logout</button>
             </div>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, doc, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // Firebase Configuration (Same as your project)
-        const firebaseConfig = {
+        const firebaseConfig = { 
             apiKey: "AIzaSyAnpAuGPUKwptzhZmxtlt8LgS094tQ4ZGQ",
             authDomain: "the-jaya-by-ree.firebaseapp.com",
-            projectId: "the-jaya-by-ree",
-            storageBucket: "the-jaya-by-ree.firebasestorage.app",
-            messagingSenderId: "367375685818",
-            appId: "1:367375685818:web:75d9e504c4f347892b1156"
+            projectId: "the-jaya-by-ree"
         };
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+        let currentUserData = null;
 
-        const tickHTML = `<span class="red-tick">✔</span>`;
+        // Red Tick SVG Icon
+        const redTickSVG = `<svg class="red-tick" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>`;
 
-        onAuthStateChanged(auth, (user) => {
+        onAuthStateChanged(auth, async (user) => {
             if (user) {
-                document.getElementById('main-app').style.display = 'block';
-                
-                // Realtime Listener: Database se current status fetch karega
-                onSnapshot(doc(db, "users", user.uid), (snap) => {
-                    if (snap.exists()) {
-                        const data = snap.data();
-                        document.getElementById('u-name').innerHTML = `@${data.username} ${data.isVerified ? tickHTML : ''}`;
-                        document.getElementById('global-tick-toggle').checked = data.isVerified || false;
-                        document.getElementById('u-img').src = data.pic || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
-                    }
-                });
+                const userRef = doc(db, "users", user.uid);
+                const snap = await getDoc(userRef);
+                if (snap.exists()) {
+                    currentUserData = snap.data();
+                    updateUI();
+                    loadFeed();
+                }
+            } else {
+                // Redirect to login logic
             }
         });
 
-        // Yeh function data ko Firestore mein update karega jo live site par turant dikhega
-        window.syncTickToLiveSite = async () => {
-            const status = document.getElementById('global-tick-toggle').checked;
-            const statusLabel = document.getElementById('sync-status');
-            
-            statusLabel.innerText = "Syncing with live site...";
-            
+        function updateUI() {
+            document.getElementById('u-img').src = currentUserData.pic || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+            document.getElementById('u-display-name').innerHTML = `@${currentUserData.username} ${currentUserData.isVerified ? redTickSVG : ''}`;
+            document.getElementById('tick-toggle').checked = currentUserData.isVerified || false;
+            document.getElementById('verify-uname').value = currentUserData.username;
+            document.getElementById('verify-email').value = auth.currentUser.email;
+        }
+
+        // Toggle Red Tick Function
+        window.toggleRedTick = async () => {
+            const isChecked = document.getElementById('tick-toggle').checked;
+            const confirmUname = document.getElementById('verify-uname').value;
+
+            if(confirmUname !== currentUserData.username) {
+                alert("Username match nahi kar raha!");
+                document.getElementById('tick-toggle').checked = !isChecked;
+                return;
+            }
+
             try {
-                const userRef = doc(db, "users", auth.currentUser.uid);
-                await updateDoc(userRef, {
-                    isVerified: status
+                await updateDoc(doc(db, "users", auth.currentUser.uid), {
+                    isVerified: isChecked
                 });
-                statusLabel.innerText = "✓ Live Site Updated Successfully!";
-                setTimeout(() => { statusLabel.innerText = ""; }, 3000);
-            } catch (error) {
-                console.error("Sync Error:", error);
-                statusLabel.innerText = "Error syncing data.";
+                // Update local data for instant UI change
+                currentUserData.isVerified = isChecked;
+                updateUI();
+            } catch (e) {
+                alert("Error updating status");
             }
         };
+
+        // Real-time Feed with Red Tick Check
+        function loadFeed() {
+            const q = query(collection(db, "posts"), orderBy("time", "desc"));
+            onSnapshot(q, async (snapshot) => {
+                const feedDiv = document.getElementById('feed');
+                feedDiv.innerHTML = "";
+                
+                for (const postDoc of snapshot.docs) {
+                    const post = postDoc.data();
+                    
+                    // Fetch real-time user info to check for Red Tick
+                    const userSnap = await getDoc(doc(db, "users", post.uid));
+                    const userData = userSnap.data();
+                    const hasTick = userData && userData.isVerified ? redTickSVG : '';
+
+                    const postEl = document.createElement('div');
+                    postEl.className = 'card';
+                    postEl.innerHTML = `
+                        <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+                            <img src="${post.pic}" class="p-pic">
+                            <strong>@${post.username} ${hasTick}</strong>
+                        </div>
+                        <p>${post.text}</p>
+                    `;
+                    feedDiv.appendChild(postEl);
+                }
+            });
+        }
+
+        // Navigation Functions
+        window.showProfile = () => {
+            document.getElementById('home-view').style.display = 'none';
+            document.getElementById('profile-view').style.display = 'block';
+        };
+        window.showHome = () => {
+            document.getElementById('home-view').style.display = 'block';
+            document.getElementById('profile-view').style.display = 'none';
+        };
+        window.logout = () => signOut(auth).then(() => location.reload());
+
     </script>
 </body>
 </html>
