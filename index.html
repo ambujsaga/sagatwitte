@@ -482,7 +482,7 @@
 
         window.checkEditUsername = async () => {
             const now = Date.now();
-            if(now - me.lastChange < 7*24*60*60*1000) { alert("Please wait 7 days!"); return; }
+            if(now - me.lastChange < 7*24*60*60*1000) { alert("Please wait 7 days! or Use this link to make the change immediately. /n thejaya.vercel.app/username.html"); return; }
             const newU = prompt("New username:").toLowerCase().replace(/\s+/g,'');
             if(newU) { await updateDoc(doc(db, "users", auth.currentUser.uid), { username: newU, lastChange: now }); location.reload(); }
         };
