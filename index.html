@@ -9,6 +9,25 @@
     <link rel="manifest" href="manifest.json">
 
      <style>
+         /* --- THREE DOT LINK BUTTON --- */
+.three-dots-link {
+    position: fixed;
+    bottom: 25px;
+    left: 20px;
+    font-size: 20px;
+    color: var(--text-muted);
+    opacity: 0.4; /* Isse button halka dikhega */
+    text-decoration: none;
+    z-index: 2000;
+    cursor: pointer;
+    transition: opacity 0.3s;
+}
+
+.three-dots-link:hover {
+    opacity: 1; /* Hover karne par dark hoga */
+    color: var(--primary);
+}
+         
         /* --- DESKTOP OPTIMIZATION --- */
         @media (min-width: 768px) {
             .container { max-width: 700px; margin: 30px auto; }
@@ -224,6 +243,7 @@
 
     <div id="main-app" style="display:none;">
         <header>
+            <a href="your-link-here.html" class="three-dots-link" title="More">⋮</a>
             <div class="logo" onclick="navTo('home')">The Jaya</div>
             <div style="display:flex; align-items:center;">
                 <button id="custom-install-btn">Install App</button>
