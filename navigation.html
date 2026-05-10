@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Jaya - Final Fix</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: white;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .navbar {
+            background: transparent; 
+            padding: 40px 5% 20px 5%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px; 
+        }
+
+        @media (min-width: 768px) {
+            .navbar {
+                flex-direction: row;
+                justify-content: space-between;
+                padding: 30px 8%;
+            }
+        }
+
+        .logo {
+            color: #ffffff;
+            font-size: 2rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+        }
+
+        .nav-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            list-style: none;
+            gap: 15px; 
+            width: 100%;
+        }
+
+        .nav-links li a {
+            text-decoration: none;
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.08);
+            padding: 12px 20px; 
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            white-space: nowrap;
+            display: inline-block; 
+        }
+
+        .nav-links li a:hover {
+            background: #e94560;
+            transform: translateY(-3px);
+        }
+
+        .contact-btn {
+            background: #e94560 !important;
+            border: none !important;
+        }
+
+        .hero-section {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .hero-section h1 {
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+            animation: colorShift 4s infinite alternate;
+        }
+
+        .typing-container {
+            font-size: 1.1rem;
+            min-height: 3em;
+            max-width: 85%;
+            line-height: 1.6;
+            margin-bottom: 30px; /* Space for image below */
+        }
+
+        #typewriter-text {
+            border-right: 3px solid #e94560;
+            padding-right: 5px;
+            animation: blink 0.7s infinite;
+        }
+
+        /* Naya Image Container */
+        .logo-display-container {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .logo-display-container img {
+            width: 150px; /* Size adjust kar sakte ho */
+            height: auto;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .logo-display-container img:hover {
+            transform: scale(1.05);
+        }
+
+        @keyframes colorShift {
+            0% { color: #ffffff; }
+            50% { color: #e94560; }
+            100% { color: #48dbfb; }
+        }
+
+        @keyframes blink {
+            50% { border-color: transparent; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo">THE JAYA</div>
+        
+        <ul class="nav-links">
+            <li><a href="#">Home</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Change username emiditilly</a></li>
+            <li><a href="#" class="contact-btn">Post downloader</a></li>
+        </ul>
+    </nav>
+
+    <div class="hero-section">
+        <h1>Welcome To The Jaya</h1>
+        <div class="typing-container">
+            <span id="typewriter-text"></span>
+        </div>
+
+        <div class="logo-display-container">
+            <img src="YOUR_LOGO_URL_HERE" alt="ree">
+        </div>
+    </div>
+
+    <script>
+        const text = "Design, Code, and Creativity combined into one seamless experience.";
+        let index = 0;
+        const element = document.getElementById("typewriter-text");
+
+        function type() {
+            if (index < text.length) {
+                element.innerHTML += text.charAt(index);
+                index++;
+                setTimeout(type, 80); 
+            } else {
+                setTimeout(() => {
+                    element.innerHTML = "";
+                    index = 0;
+                    type();
+                }, 3000);
+            }
+        }
+
+        window.onload = type;
+    </script>
+
+</body>
+</html>

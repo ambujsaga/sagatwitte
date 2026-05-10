@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us | The Jaya</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* CSS Starts Here */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column; /* Changed to column to accommodate footer logo */
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* New Back Button Styling */
+        .back-nav {
+            position: absolute;
+            top: 25px;
+            right: 30px;
+            z-index: 10;
+        }
+
+        .back-btn {
+            text-decoration: none;
+            color: #fff;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: 0.3s;
+            backdrop-filter: blur(5px);
+        }
+
+        .back-btn:hover {
+            background: rgba(0, 210, 255, 0.2);
+            border-color: #00d2ff;
+            transform: translateX(-5px);
+        }
+
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            z-index: 1;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+            padding: 50px;
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 1.2s ease-out;
+        }
+
+        .hero-text {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .hero-text h1 {
+            font-size: clamp(2.5rem, 8vw, 3.5rem);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            background: linear-gradient(to right, #00d2ff, #92fe9d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+        }
+
+        .tagline {
+            font-weight: 300;
+            color: #b0b0b0;
+            font-size: 1.1rem;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 40px;
+        }
+
+        h3 {
+            color: #00d2ff;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+        }
+
+        /* Update: Centering Ambuj Saga Text globally */
+        .profile-box h3 {
+            justify-content: center;
+            text-align: center;
+        }
+
+        .text-box p {
+            line-height: 1.8;
+            color: #e0e0e0;
+            margin-bottom: 25px;
+        }
+
+        .skills-list {
+            list-style: none;
+        }
+
+        .skills-list li {
+            margin-bottom: 12px;
+            background: rgba(255, 255, 255, 0.08);
+            padding: 12px 18px;
+            border-radius: 12px;
+            transition: all 0.4s ease;
+            cursor: default;
+            border: 1px solid transparent;
+        }
+
+        .skills-list li:hover {
+            background: rgba(0, 210, 255, 0.15);
+            transform: translateX(10px);
+            border-color: rgba(0, 210, 255, 0.4);
+        }
+
+        .profile-box {
+            text-align: center;
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+            padding-left: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .profile-img {
+            width: 140px;
+            height: 140px;
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            border: 3px solid #00d2ff;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #1a1a1a;
+            box-shadow: 0 0 20px rgba(0, 210, 255, 0.3);
+        }
+
+        .img-placeholder {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #00d2ff;
+        }
+
+        .role {
+            font-size: 1rem;
+            color: #00d2ff;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .bio {
+            font-size: 0.95rem;
+            color: #ccc;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            background: linear-gradient(to right, #00d2ff, #3a7bd5);
+            color: #fff;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+            align-self: center;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(0, 210, 255, 0.5);
+        }
+
+        /* Footer Logo Styling */
+        .footer-logo {
+            margin-top: 40px;
+            text-align: center;
+            opacity: 0.8;
+            transition: 0.3s;
+        }
+
+        .footer-logo:hover {
+            opacity: 1;
+        }
+
+        .footer-logo img {
+            max-width: 60px; /* Adjust size as needed */
+            height: auto;
+            filter: drop-shadow(0 0 5px rgba(0, 210, 255, 0.5));
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            .back-nav { top: 15px; right: 15px; }
+            .content-grid { grid-template-columns: 1fr; }
+            .profile-box { border-left: none; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 30px; padding-left: 0; }
+            .glass-card { padding: 30px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="back-nav">
+        <a href="index.html" class="back-btn">← Home</a>
+    </nav>
+
+    <div class="container">
+        <section class="glass-card">
+            <div class="hero-text">
+                <h1>The Jaya</h1>
+                <p class="tagline">Innovation Meets Cinematic Excellence</p>
+            </div>
+
+            <div class="content-grid">
+                <div class="text-box">
+                    <h3>Our Vision</h3>
+                    <p>At <strong>The Jaya</strong>, we are taking digital creativity to the next level. Our goal is to create a seamless blend of cinematic visuals and powerful web solutions that inspire the world.</p>
+                    
+                    <h3>Expertise</h3>
+                    <ul class="skills-list">
+                        <li><span>⚡</span> High-End Web Development</li>
+                        <li><span>🎥</span> 4K HDR Cinematic Editing</li>
+                        <li><span>🚀</span> Social Media Growth Strategy</li>
+                    </ul>
+                </div>
+
+                <div class="profile-box">
+                    <div class="profile-img">
+                        <div class="img-placeholder">AS</div>
+                    </div>
+                    <h3>Ambuj Saga</h3>
+                    <p class="role">Founder & Lead Developer</p>
+                    <p class="bio">A web developer and visual content creator dedicated to pushing the boundaries of technology and design.</p>
+                    <button class="btn" id="connectBtn">Connect Now</button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="footer-logo">
+        <img src="YOUR_LOGO_URL_HERE.png" alt="ree">
+    </div>
+
+    <script>
+        // JavaScript Starts Here
+        document.getElementById('connectBtn').addEventListener('click', function() {
+            window.location.href = '#'; 
+            alert('Redirecting to Ambuj Saga\'s Portfolio...');
+        });
+
+        console.log("The Jaya Website Loaded Successfully.");
+    </script>
+</body>
+</html>
