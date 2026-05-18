@@ -358,6 +358,8 @@
         </div></div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, updateEmail, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
@@ -436,13 +438,17 @@
                 if(dSnap.exists()) {
                     me = dSnap.data();
                     
+                    // Dynamic automated mapping when user successfully logs in with verified custom email
                     if(u.emailVerified && u.email && !u.email.endsWith('@thejaya.com') && me.email !== u.email) {
-                        const automaticGmailPic = `https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80`;
-                        me.pic = automaticGmailPic;
+                        const emailHash = CryptoJS.MD5(u.email.trim().toLowerCase()).toString();
+                        // Dynamic Gravatar mapping linking directly to actual user's real platform uploaded global avatar identifier
+                        const dynamicVerifiedPic = `https://www.gravatar.com/avatar/${emailHash}?d=identicon&s=150`;
+                        
+                        me.pic = dynamicVerifiedPic;
                         me.email = u.email;
                         
                         await updateDoc(doc(db, "users", u.uid), { 
-                            pic: automaticGmailPic,
+                            pic: dynamicVerifiedPic,
                             email: u.email 
                         });
                     }
