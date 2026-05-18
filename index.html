@@ -357,10 +357,10 @@
             </div>
         </div></div>
     </div>
-
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        // Firebase Auth se sendEmailVerification ko import kiya gaya
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, doc, updateDoc, arrayUnion, deleteDoc, getDoc, setDoc, where, getDocs, arrayRemove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const defaultAvtr = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
@@ -461,7 +461,6 @@
             }
         });
 
-        // Interface Toggle Router Functions
         window.switchAuthTab = (tab) => {
             if(tab === 'login') {
                 document.getElementById('tab-login').classList.add('active');
@@ -476,7 +475,6 @@
             }
         };
 
-        // Form Submission Router Sequence
         window.handleAuthSubmit = async (event, mode) => {
             event.preventDefault();
             
@@ -508,7 +506,6 @@
                 }
             } else {
                 try {
-                    // Unique check to avoid duplication before auth triggers
                     const checkSnap = await getDocs(query(collection(db, "users"), where("username", "==", uname)));
                     if(!checkSnap.empty) {
                         alert("Username already taken! Please choose a unique one.");
@@ -549,6 +546,21 @@
             } else cb();
         };
 
+        // NEW METHOD: Email verification function jo link generate karke send karegi
+        window.sendVerificationEmail = async () => {
+            const user = auth.currentUser;
+            if (user) {
+                try {
+                    await sendEmailVerification(user);
+                    alert("Verification email sent successfully! Please check your email inbox or spam folder.");
+                } catch (error) {
+                    alert("Error sending email: " + error.message);
+                }
+            } else {
+                alert("No logged in user found.");
+            }
+        };
+
         window.navTo = (v, isMe = true, other = null) => {
             document.getElementById('home-view').style.display = v === 'home' ? 'block' : 'none';
             document.getElementById('profile-view').style.display = v === 'profile' ? 'block' : 'none';
@@ -564,11 +576,15 @@
                 document.getElementById('u-name').innerText = "@" + (user.username || "user");
                 document.getElementById('my-controls').style.display = isMe ? 'block' : 'none';
                 
+                // Verification system dynamically handling updates
                 const verifySection = document.getElementById('verification-section');
                 if(isMe && auth.currentUser) {
                     verifySection.style.display = 'block';
                     const statusText = document.getElementById('verify-status-text');
                     const verifyBtn = document.getElementById('sendVerifyEmailBtn');
+                    
+                    // Button par click event yahan link kar diya gaya hai
+                    verifyBtn.onclick = window.sendVerificationEmail;
                     
                     if(auth.currentUser.emailVerified) {
                         statusText.innerHTML = "✅ Verified (Gmail Avatar Applied)";
@@ -734,5 +750,7 @@
         postInput.addEventListener('keyup', updateWordCount);
         postInput.addEventListener('change', updateWordCount);
     </script>
+
+    
 </body>
 </html>
