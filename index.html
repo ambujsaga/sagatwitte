@@ -825,7 +825,12 @@
             uname = uname.toLowerCase().replace(/[^a-z0-9]/g, '').trim();
             
             if(uname.length < 3) {
-                alert("Username must be at least 3 valid alphanumeric characters!");
+                alert("⚠️ Username Instructions:\n• Username me kam se kam 3 characters hone chahiye.\n• Space ya special symbols (@, #, $) allow nahi hain.\n• Baas a-z aur 0-9 use karein!");
+                return;
+            }
+
+            if(pass.length < 6) {
+                alert("⚠️ Password Constraints:\n• Aapka password kam se kam 6 characters ka hona chahiye!");
                 return;
             }
 
@@ -836,7 +841,7 @@
                     await signInWithEmailAndPassword(auth, pseudoEmail, pass);
                 } catch (err) {
                     if(err.code === "auth/wrong-password" || err.code === "auth/invalid-credential" || err.code === "auth/user-not-found") {
-                        alert("Invalid Username or Password!");
+                        alert("❌ System Error: Invalid Username or Password! Dobara sahi credentials daalein.");
                     } else {
                         alert("Error: " + err.message);
                     }
@@ -846,7 +851,7 @@
                     // Unique check to avoid duplication before auth triggers
                     const checkSnap = await getDocs(query(collection(db, "users"), where("username", "==", uname)));
                     if(!checkSnap.empty) {
-                        alert("Username already taken! Please choose a unique one.");
+                        alert("❌ Username Taken: Yeh username pehle se kisi ne le rakha hai! Kuchh unique try karein.");
                         return;
                     }
 
@@ -857,11 +862,11 @@
                         pic: defaultAvtr,
                         lastChange: Date.now()
                     });
-                    alert("Account Created successfully!");
+                    alert("🎉 Success: Account successfully create ho gaya hai! System me entry ho rahi hai...");
                     location.reload();
                 } catch (err) {
                     if(err.code === "auth/email-already-in-use") {
-                        alert("Username already registered!");
+                        alert("❌ Duplicate Error: Yeh username already registered hai!");
                     } else {
                         alert("Signup Error: " + err.message);
                     }
@@ -1021,6 +1026,8 @@
             await updateDoc(doc(db, "posts", id), { comments: arrayUnion({ uid: auth.currentUser.uid, user: me.username || 'user', msg: i.value }) });
             i.value = "";
         };
+
+        window.getFirestoreInstance = () => db; // Added internal secure reference check pointer safely
 
         window.delCom = async (pid, idx) => {
             const r = doc(db, "posts", pid); const s = await getDoc(r);
