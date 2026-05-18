@@ -476,21 +476,29 @@
             }
         };
 
-        // Form Submission Router Sequence
+        // Form Submission Router Sequence with Safe Data Cleansing
         window.handleAuthSubmit = async (event, mode) => {
             event.preventDefault();
             
             let uname = "", pass = "";
             if(mode === 'login') {
-                uname = document.getElementById('login-username').value.toLowerCase().replace(/\s+/g,'').trim();
+                uname = document.getElementById('login-username').value;
                 pass = document.getElementById('login-pass').value.trim();
             } else {
-                uname = document.getElementById('signup-username').value.toLowerCase().replace(/\s+/g,'').trim();
+                uname = document.getElementById('signup-username').value;
                 pass = document.getElementById('signup-pass').value.trim();
             }
 
-            if(!uname || !pass) {
+            if(!uname || !pass || uname.trim() === "") {
                 alert("Please fill all fields!");
+                return;
+            }
+
+            // CLEANSE: Remove spaces, special characters except basic alpha-numeric for bulletproof emails
+            uname = uname.toLowerCase().replace(/[^a-z0-9]/g, '').trim();
+            
+            if(uname.length < 3) {
+                alert("Username must be at least 3 valid alphanumeric characters!");
                 return;
             }
 
@@ -651,7 +659,8 @@
             if(now - me.lastChange < 7*24*60*60*1000) { alert("Please wait 7 days! or Use this link to make the change immediately.    https://thejaya.vercel.app/username.html"); return; }
             let newU = prompt("New username:");
             if(newU) { 
-                newU = newU.toLowerCase().replace(/\s+/g,'');
+                newU = newU.toLowerCase().replace(/[^a-z0-9]/g, '');
+                if(newU.length < 3) { alert("Invalid unique username!"); return; }
                 const q = query(collection(db, "users"), where("username", "==", newU));
                 const querySnapshot = await getDocs(q);
                 if(!querySnapshot.empty) { alert("Username already taken!"); return; }
@@ -682,14 +691,14 @@
         window.findUser = async () => {
             let qStr = document.getElementById('sq').value;
             if(!qStr || !qStr.trim()) return;
-            qStr = qStr.toLowerCase().trim();
+            qStr = qStr.toLowerCase().replace(/[^a-z0-9]/g, '').trim();
             const s = await getDocs(query(collection(db, "users"), where("username", "==", qStr)));
             if(s.empty) alert("No user found!"); else navTo('profile', false, s.docs[0].data());
         };
 
         window.findUserByUname = async (un) => {
             if(!un) return;
-            const s = await getDocs(query(collection(db, "users"), where("username", "==", un.toLowerCase().trim())));
+            const s = await getDocs(query(collection(db, "users"), where("username", "==", un.toLowerCase().replace(/[^a-z0-9]/g, '').trim())));
             if(!s.empty) navTo('profile', false, s.docs[0].data());
         };
 
